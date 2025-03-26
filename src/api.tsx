@@ -6,12 +6,15 @@ import { FullOptions, normalizeOptions, PartialOptions } from './config';
 export const scrollIntoView = async (
   scrollView: ScrollView,
   view: View,
+  scrollX: number,
   scrollY: number,
   options: PartialOptions,
 ) => {
   const {
-    align,
+    alignX,
+    alignY,
     animated,
+    computeScrollX,
     computeScrollY,
     measureElement,
     insets,
@@ -22,28 +25,42 @@ export const scrollIntoView = async (
     measureElement(view),
   ]);
 
+  const newScrollX = computeScrollX(
+    scrollViewLayout,
+    viewLayout,
+    scrollX,
+    insets,
+    alignX,
+  );
+
   const newScrollY = computeScrollY(
     scrollViewLayout,
     viewLayout,
     scrollY,
     insets,
-    align,
+    alignY,
   );
 
   const scrollResponder = scrollView.getScrollResponder();
   if (scrollResponder.scrollResponderScrollTo != null) {
-    scrollResponder.scrollResponderScrollTo({ x: 0, y: newScrollY, animated });
+    scrollResponder.scrollResponderScrollTo({
+      x: newScrollX,
+      y: newScrollY,
+      animated,
+    });
   } else {
-    scrollView.scrollTo({ x: 0, y: newScrollY, animated });
+    scrollView.scrollTo({ x: newScrollX, y: newScrollY, animated });
   }
 };
 
 type GetScrollView = () => ScrollView;
+type GetScrollX = () => number;
 type GetScrollY = () => number;
 type GetDefaultOptions = () => FullOptions;
 
 export type ScrollIntoViewDependencies = {
   getScrollView: GetScrollView;
+  getScrollX: GetScrollX;
   getScrollY: GetScrollY;
   getDefaultOptions: GetDefaultOptions;
 };
@@ -54,6 +71,9 @@ export class ScrollIntoViewAPI {
   constructor(dependencies: ScrollIntoViewDependencies) {
     if (!dependencies.getScrollView) {
       throw new Error('getScrollView is required');
+    }
+    if (!dependencies.getScrollX) {
+      throw new Error('getScrollX is required');
     }
     if (!dependencies.getScrollY) {
       throw new Error('getScrollY is required');
@@ -83,6 +103,7 @@ export class ScrollIntoViewAPI {
     return scrollIntoView(
       this.dependencies.getScrollView(),
       view,
+      this.dependencies.getScrollX(),
       this.dependencies.getScrollY(),
       options,
     );
@@ -92,6 +113,7 @@ export class ScrollIntoViewAPI {
     return scrollIntoView(
       this.dependencies.getScrollView(),
       view,
+      this.dependencies.getScrollX(),
       this.dependencies.getScrollY(),
       options,
     );

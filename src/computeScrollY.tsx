@@ -1,6 +1,6 @@
 import React from 'react';
 import { LayoutRectangle } from 'react-native';
-import { Insets, Align } from './config';
+import { Insets, AlignVertical } from './config';
 
 type ComputationData = {
   scrollViewHeight: number;
@@ -15,7 +15,7 @@ export const computeScrollY = (
   viewLayout: LayoutRectangle,
   scrollY: number,
   insets: Insets,
-  align: Align,
+  alignY: AlignVertical,
 ) => {
   const scrollViewHeight = scrollViewLayout.height;
   const childHeight = viewLayout.height;
@@ -29,7 +29,7 @@ export const computeScrollY = (
     viewBottomY,
     insets,
   };
-  switch (align) {
+  switch (alignY) {
     case 'auto':
       return computeScrollYAuto(computationData);
     case 'top':
@@ -39,7 +39,7 @@ export const computeScrollY = (
     case 'center':
       return computeScrollYCenter(computationData);
     default:
-      throw new Error(`align=${align} not supported`);
+      throw new Error(`align=${alignY} not supported`);
   }
 };
 

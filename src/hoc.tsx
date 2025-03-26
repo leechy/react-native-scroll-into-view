@@ -45,15 +45,18 @@ export const wrapScrollViewHOC = (
       'Component'})`;
 
     ref: React.RefObject<ScrollView>;
+    scrollX: number;
     scrollY: number;
     dependencies: ScrollIntoViewDependencies;
 
     constructor(props: HOCProps) {
       super(props);
       this.ref = React.createRef();
+      this.scrollX = this.props.contentOffset ? this.props.contentOffset.x : 0;
       this.scrollY = this.props.contentOffset ? this.props.contentOffset.y : 0;
       this.dependencies = {
         getScrollView: this.getScrollView,
+        getScrollX: this.getScrollX,
         getScrollY: this.getScrollY,
         getDefaultOptions: this.getDefaultOptions,
       };
@@ -74,6 +77,8 @@ export const wrapScrollViewHOC = (
     handleScroll = (event: ScrollViewScrollEvent) => {
       this.scrollY = event.nativeEvent.contentOffset.y;
     };
+
+    getScrollX = () => this.scrollX;
 
     getScrollY = () => this.scrollY;
 

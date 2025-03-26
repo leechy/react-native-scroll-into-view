@@ -1,20 +1,26 @@
 import React from 'react';
-import { ScrollView , Platform} from 'react-native';
+import { ScrollView, Platform } from 'react-native';
 import { measureElement } from './utils';
+import { computeScrollX } from './computeScrollX';
 import { computeScrollY } from './computeScrollY';
 
 export type Insets = {
   top: number;
+  end: number;
   bottom: number;
+  start: number;
 };
 
-export type Align = 'auto' | 'top' | 'bottom' | 'center';
+export type AlignVertical = 'auto' | 'top' | 'bottom' | 'center';
+export type AlignHorizontal = 'auto' | 'start' | 'end' | 'center';
 
 export type FullOptions = {
-  align: Align;
+  alignX: AlignHorizontal;
+  alignY: AlignVertical;
   animated: boolean;
   immediate: boolean;
   insets: Insets;
+  computeScrollX: typeof computeScrollX;
   computeScrollY: typeof computeScrollY;
   measureElement: typeof measureElement;
 };
@@ -22,15 +28,19 @@ export type FullOptions = {
 export type PartialOptions = Partial<FullOptions>;
 
 export const DefaultOptions: FullOptions = {
-  align: 'auto',
+  alignX: 'auto',
+  alignY: 'auto',
   animated: true,
   immediate: false,
   insets: {
     top: 0,
+    end: 0,
     bottom: 0,
+    start: 0,
   },
-  computeScrollY: computeScrollY,
-  measureElement: measureElement,
+  computeScrollX,
+  computeScrollY,
+  measureElement,
 };
 
 export type OptionKey = keyof FullOptions;
@@ -66,7 +76,10 @@ export const DefaultHOCConfig: FullHOCConfig = {
   getScrollViewNode: (scrollView: ScrollView) => {
     // for animated components, ref.getNode() is deprecated since RN 0.62
     // See https://github.com/facebook/react-native/commit/66e72bb4e00aafbcb9f450ed5db261d98f99f82a
-    const shouldCallGetNode = !Platform.constants || Platform.constants.reactNativeVersion.major === 0 && Platform.constants.reactNativeVersion.minor < 62;
+    const shouldCallGetNode =
+      !Platform.constants ||
+      (Platform.constants.reactNativeVersion.major === 0 &&
+        Platform.constants.reactNativeVersion.minor < 62);
     // getNode() permit to support Animated.ScrollView,
     // see https://stackoverflow.com/questions/42051368/scrollto-is-undefined-on-animated-scrollview/48786374
     // @ts-ignore

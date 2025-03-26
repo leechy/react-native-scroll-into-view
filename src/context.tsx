@@ -9,6 +9,7 @@ export const APIConsumer = Context.Consumer;
 
 export class ProvideAPI extends React.Component<{
   dependencies: ScrollIntoViewDependencies;
+  children?: React.ReactNode;
 }> {
   api = new ScrollIntoViewAPI(this.props.dependencies);
   render() {

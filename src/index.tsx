@@ -2,7 +2,7 @@ import { PartialHOCConfig } from './config';
 import { WrappableComponent, wrapScrollViewHOC } from './hoc';
 import { Container } from './container';
 
-export * from "./hooks";
+export * from './hooks';
 
 export const ScrollIntoView = Container;
 
